@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>For You 🤍</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Comic Sans MS', cursive;
+  text-align:center;
+  overflow:hidden;
+  background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee);
+  background-size:400% 400%;
+  animation:bg 12s ease infinite;
+  color:white;
+}
+
+@keyframes bg{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+.screen{
+  display:none;
+  height:100vh;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
+.active{
+  display:flex;
+}
+
+button{
+  padding:12px 25px;
+  margin:10px;
+  border:none;
+  border-radius:30px;
+  background:white;
+  color:#ff4da6;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.1);
+}
+
+.gift{
+  font-size:120px;
+  animation:bounce 2s infinite;
+}
+
+@keyframes bounce{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-20px);}
+}
+
+.card{
+  background:white;
+  color:#333;
+  padding:30px;
+  border-radius:20px;
+  width:70%;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+#birthdayText{
+  font-size:70px;
+  opacity:0;
+  transition:2s;
+  text-shadow:0 0 20px white;
+}
+
+.balloon{
+  width:40px;
+  height:60px;
+  border-radius:50%;
+  position:absolute;
+  bottom:-100px;
+  animation:float 8s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(0);}
+  to{transform:translateY(-120vh);}
+}
+
+#letter{
+  display:none;
+  background:#fff8dc;
+  color:#444;
+  padding:30px;
+  width:75%;
+  border-radius:15px;
+  text-align:left;
+  font-family:'Courier New', monospace;
+  line-height:1.6;
+  box-shadow:0 0 25px rgba(0,0,0,0.4);
+  animation:pop 0.5s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(0.5);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+.center{
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div id="screen1" class="screen active">
+  <div class="gift">🎁</div>
+  <h2>Something from satkivi ladki 😌💗</h2>
+  <button onclick="nextScreen(2)">OPEN FAST 😤</button>
+</div>
+
+<div id="screen2" class="screen">
+  <div class="card">
+    <h2>Before we continue…</h2>
+    <h3>Are you ready? 😌</h3>
+    <button onclick="startBirthday()">YES OBVIOUSLY</button>
+    <button onclick="noClick()">No 😶</button>
+  </div>
+</div>
+
+<div id="screen3" class="screen">
+  <h1 id="birthdayText">🎉 HAPPY BIRTHDAY 🎉</h1>
+  <button onclick="showLetter()">OPEN THIS CARD 💌</button>
+
+  <div id="letter">
+    Wishing you many more happy returns of the day 🥳<br><br>
+
+    May Allah SWT give you more success ahead in your life and bless you with health and boundless happiness and gifts like me 😂<br><br>
+
+    Thankyou so much for meri bak bak bakwas baatein sunne ke liye 🥹 without getting on your nerves ..<br><br>
+
+    It's unbelievable for me ki I have a bond which feels like home and comfortable and so much of peace in it and a VALUABLE one ofcourse ..<br><br>
+
+    I wish mai aur bakwas krte rahun aur aap aise hi sunte raho bak bak 😂<br><br>
+
+    Abh please kuch overthink mat kro 😭<br><br>
+
+    <div class="center">
+    From Rumii ❤️<br><br>
+    Thankyou yahan tak padhne ke liye 😂
+    </div>
+  </div>
+</div>
+
+<script>
+
+let audioContext;
+let masterGain;
+
+function nextScreen(num){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen"+num).classList.add("active");
+}
+
+function noClick(){
+  alert("Bhot bura tha ye card 😤");
+}
+
+function startBirthday(){
+    startRomanticMusic();
+    nextScreen(3);
+    document.getElementById("birthdayText").style.opacity = 1;
+    createBalloons();
+}
+
+function startRomanticMusic(){
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioContext.createGain();
+  masterGain.gain.value = 0.12; 
+  masterGain.connect(audioContext.destination);
+
+  playPianoLoop();
+}
+
+function playPianoLoop(){
+  const now = audioContext.currentTime;
+
+  const melody = [
+    261.63, 293.66, 329.63, 392.00,
+    329.63, 293.66, 261.63, 196.00
+  ];
+
+  melody.forEach((freq, index) => {
+
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    // Piano-like softer waveform
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+
+    // Softer attack + longer fade (piano feel)
+    gain.gain.setValueAtTime(0.0001, now + index * 0.8);
+    gain.gain.exponentialRampToValueAtTime(0.25, now + index * 0.8 + 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.8 + 1.5);
+
+    osc.connect(gain);
+    gain.connect(masterGain);
+
+    osc.start(now + index * 0.8);
+    osc.stop(now + index * 0.8 + 1.5);
+  });
+
+  // Loop every ~7 seconds
+  setTimeout(playPianoLoop, 7000);
+}
+
+
+function playLoop(){
+  const now = audioContext.currentTime;
+
+  const chords = [
+    [261.63, 329.63, 392.00], 
+    [293.66, 369.99, 440.00],
+    [329.63, 415.30, 493.88],
+    [261.63, 329.63, 392.00]
+  ];
+
+  chords.forEach((chord, index) => {
+    chord.forEach(freq => {
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      osc.type = "sine";
+      osc.frequency.value = freq;
+
+      gain.gain.setValueAtTime(0.0001, now + index * 2);
+      gain.gain.exponentialRampToValueAtTime(0.2, now + index * 2 + 0.5);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 2 + 2);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(now + index * 2);
+      osc.stop(now + index * 2 + 2);
+    });
+  });
+
+  setTimeout(playLoop, 8000);
+}
+
+function createBalloons(){
+  for(let i=0;i<20;i++){
+    let balloon=document.createElement("div");
+    balloon.classList.add("balloon");
+    balloon.style.left=Math.random()*100+"vw";
+    balloon.style.background=["pink","yellow","lightblue","white","lavender"][Math.floor(Math.random()*5)];
+    document.body.appendChild(balloon);
+  }
+}
+
+function showLetter(){
+  document.getElementById("letter").style.display="block";
+}
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
